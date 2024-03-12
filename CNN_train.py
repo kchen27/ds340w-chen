@@ -7,18 +7,16 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 import numpy as np
-#from tensorflow import set_seed 
 import keras
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, MaxPooling1D, GlobalAveragePooling1D
 from keras.layers import Conv1D, Conv2D, Reshape
 from keras.utils import plot_model
 import keras.backend as K
-#from keras.optimizers import adam
 import matplotlib.pyplot as pl
 from sklearn.metrics import r2_score
 import math, sys
-#Kyle path
+#path
 sys.path.append('/Users/kylechen/Library/CloudStorage/OneDrive-ThePennsylvaniaStateUniversity/Senior/S24/DS 340W/ds340w-project/ds340w-chen')
 
 #from gmpe_tools import bssa14_one_station
@@ -110,7 +108,7 @@ def CNN_model(n_timesteps, n_chns, loss='mse', optimizer='adam', modelDisplay=Fa
         
     return model
 
-
+'''
 def datasetPlot(x, y, xlabel, ylabel, xbin, ybin, ymin=-3, ymax=8, figSavePath=False, figName=False):
     # data check
     plt.figure()
@@ -388,3 +386,4 @@ plt.xlabel('TW (s)')
 plt.ylabel('r2 score')
 plt.grid()
 plt.savefig('r2score.png', dpi=200)
+'''
