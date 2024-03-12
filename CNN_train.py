@@ -1,7 +1,7 @@
 import h5py
 import matplotlib.pyplot as plt
 import numpy as np
-
+#Authors Alvin Chen and Kyle Chen
 import os
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
