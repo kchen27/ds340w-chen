@@ -2,13 +2,9 @@ import os
 import numpy as np
 import h5py
 import matplotlib.pyplot as plt
-<<<<<<< HEAD
 import numpy as np
 #Authors Alvin Chen and Kyle Chen
-#Testing git
 import os
-=======
->>>>>>> 6450734 (modified and simplify the model)
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Conv1D, MaxPooling1D, Flatten, Dense, Dropout
@@ -52,8 +48,8 @@ def create_CNN_model(input_shape, optimizer='adam', loss='mse'):
     return model
 
 # Load the data
-path = '/path/to/your/data'
-fileName = 'your_data_file.hdf5'
+path = '/Users/kylechen/Library/CloudStorage/OneDrive-ThePennsylvaniaStateUniversity/Senior/S24/DS 340W/ds340w-project/ds340w-chen'
+fileName = 'NCEDC_new.hdf5'
 with h5py.File(os.path.join(path, fileName), 'r') as f:
     X = np.array(f['velData'])
     Y = np.array(f['MMI_PGA'])
