@@ -2,9 +2,6 @@ import os
 import numpy as np
 import h5py
 import matplotlib.pyplot as plt
-import numpy as np
-#Authors Alvin Chen and Kyle Chen
-import os
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Conv1D, MaxPooling1D, Flatten, Dense, Dropout
@@ -12,6 +9,11 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.utils import plot_model
 from sklearn.metrics import r2_score
 from scipy.stats import norm
+# Try subset of the data
+# Work on the augmentation
+# Consider about the actual methods
+# Have the results and show the problems that either exists or not
+
 
 # Set the random seed for reproducibility
 np.random.seed(1)
@@ -34,10 +36,10 @@ def calculate_MMI(PGM, R, M, case):
 # Define a function to create and compile the CNN model
 def create_CNN_model(input_shape, optimizer='adam', loss='mse'):
     model = Sequential([
-        Conv1D(filters=32, kernel_size=20, activation='relu', input_shape=input_shape),
+        Conv1D(filters=32, kernel_size=10, activation='relu', padding='same', input_shape=input_shape),
         Dropout(0.1),
         MaxPooling1D(pool_size=2),
-        Conv1D(filters=64, kernel_size=20, activation='relu'),
+        Conv1D(filters=64, kernel_size=10, activation='relu', padding='same'),
         Dropout(0.05),
         Flatten(),
         Dense(100, activation='relu'),
@@ -47,9 +49,10 @@ def create_CNN_model(input_shape, optimizer='adam', loss='mse'):
     model.compile(loss=loss, optimizer=optimizer, metrics=['accuracy'])
     return model
 
+
 # Load the data
-path = '/Users/kylechen/Library/CloudStorage/OneDrive-ThePennsylvaniaStateUniversity/Senior/S24/DS 340W/ds340w-project/ds340w-chen'
-fileName = 'NCEDC_new.hdf5'
+path = '/Users/kylechen/OneDrive - The Pennsylvania State University/Senior/S24/DS 340W/ds340w-project/ds340w-chen'
+fileName = '/Users/kylechen/OneDrive - The Pennsylvania State University/Senior/S24/DS 340W/ds340w-project/ds340w-chen/Data/NCEDC_new.hdf5'
 with h5py.File(os.path.join(path, fileName), 'r') as f:
     X = np.array(f['velData'])
     Y = np.array(f['MMI_PGA'])
@@ -90,3 +93,4 @@ plt.ylabel('Loss')
 plt.legend()
 plt.grid()
 plt.show()
+
