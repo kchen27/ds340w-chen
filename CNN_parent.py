@@ -140,8 +140,8 @@ def datasetPlot(x, y, xlabel, ylabel, xbin, ybin, ymin=-3, ymax=8, figSavePath=F
 
 
 # load data
-path = 'E:\MLData\groundMotion'
-fileName = 'LA.hdf5'
+path = '/Users/kylechen/OneDrive - The Pennsylvania State University/Senior/S24/DS 340W/ds340w-project/ds340w-chen/Data'
+fileName = 'NCEDC_new.hdf5'
 f = h5py.File(os.path.join(path, fileName), 'r')
 
 
@@ -151,7 +151,7 @@ Y = f['MMI_PGA']
 
 ##########################################
 # Show data distribution
-figSavePath = 'H:/python/CNN_figure/'
+figSavePath = '/Users/kylechen/OneDrive - The Pennsylvania State University/Senior/S24/DS 340W/ds340w-project/ds340w-chen/CNN_figure'
 datasetNam = 'CA'#'SCEDC'
 
 x, y = f['epicentral distance'], f['Mag']

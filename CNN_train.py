@@ -14,7 +14,6 @@ from scipy.stats import norm
 # Consider about the actual methods
 # Have the results and show the problems that either exists or not
 
-
 # Set the random seed for reproducibility
 np.random.seed(1)
 
@@ -48,6 +47,35 @@ def create_CNN_model(input_shape, optimizer='adam', loss='mse'):
     ])
     model.compile(loss=loss, optimizer=optimizer, metrics=['accuracy'])
     return model
+
+def augment_data(X, num_stations_subset, blinding_time_range):
+    """
+    Perform data augmentation by selecting a subset of stations and applying temporal blinding.
+
+    Parameters:
+    - X: The original dataset (num_samples, num_stations, num_features)
+    - num_stations_subset: Number of stations to include in the subset
+    - blinding_time_range: Tuple indicating the range (min, max) from which to randomly choose the blinding time
+
+    Returns:
+    - Augmented data
+    """
+    augmented_X = []
+    num_samples, num_stations, num_features = X.shape
+    
+    for sample in X:
+        # Randomly select a subset of stations
+        stations_indices = np.random.choice(num_stations, num_stations_subset, replace=False)
+        sample_subset = sample[stations_indices, :]
+        
+        # Apply temporal blinding by zeroing waveforms after a random time t_1
+        t_1 = np.random.uniform(blinding_time_range[0], blinding_time_range[1])
+        time_index = int(t_1 * num_features)  # Assuming uniform time distribution in features
+        sample_blinded = np.array([np.where(np.arange(num_features) > time_index, 0, station) for station in sample_subset])
+        
+        augmented_X.append(sample_blinded)
+    
+    return np.array(augmented_X)
 
 
 # Load the data
@@ -116,3 +144,4 @@ def datasetPlot(x, y, xlabel, ylabel, xbin, ybin, ymin=-3, ymax=8, figSavePath=F
     if figSavePath and figName:
         plt.savefig(figSavePath+figName, dpi=200) #, transparent=True
     plt.show()
+
