@@ -7,7 +7,7 @@ from keras.models import Sequential
 from keras.layers import Conv1D, MaxPooling1D, Flatten, Dense, Dropout
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.utils import plot_model
-from sklearn.metrics import r2_score
+from sklearn.metrics import r2_score, mean_squared_error
 from scipy.stats import norm
 # Try subset of the data
 # Work on the augmentation
@@ -63,6 +63,9 @@ def augment_data(X, num_stations_subset, blinding_time_range):
     augmented_X = []
     num_samples, num_stations, num_features = X.shape
     
+    # Ensure num_stations_subset does not exceed the number of available stations
+    num_stations_subset = min(num_stations_subset, num_stations)
+    
     for sample in X:
         # Randomly select a subset of stations
         stations_indices = np.random.choice(num_stations, num_stations_subset, replace=False)
@@ -78,6 +81,7 @@ def augment_data(X, num_stations_subset, blinding_time_range):
     return np.array(augmented_X)
 
 
+
 # Load the data
 path = '/Users/kylechen/OneDrive - The Pennsylvania State University/Senior/S24/DS 340W/ds340w-project/ds340w-chen'
 fileName = '/Users/kylechen/OneDrive - The Pennsylvania State University/Senior/S24/DS 340W/ds340w-project/ds340w-chen/Data/NCEDC_new.hdf5'
@@ -90,8 +94,15 @@ with h5py.File(os.path.join(path, fileName), 'r') as f:
 # Split the data into training and testing sets
 train_X, test_X, train_Y, test_Y = train_test_split(X, Y, test_size=0.4, random_state=42)
 
+# Data augmentation parameters
+num_stations_subset = 10  # Example value
+blinding_time_range = (0, 10)  # Example range in seconds
+
+# Augment the training data
+augmented_train_X = augment_data(train_X, num_stations_subset, blinding_time_range)
+
 # Normalize the input data
-train_X = train_X / np.std(train_X)
+train_X = augmented_train_X / np.std(augmented_train_X)
 test_X = test_X / np.std(test_X)
 
 # Define the model
@@ -145,3 +156,49 @@ def datasetPlot(x, y, xlabel, ylabel, xbin, ybin, ymin=-3, ymax=8, figSavePath=F
         plt.savefig(figSavePath+figName, dpi=200) #, transparent=True
     plt.show()
 
+
+
+# Calculate R-squared score
+r2 = r2_score(test_Y, pred_test_Y)
+print('R-squared score:', r2)
+
+# Calculate mean error and standard deviation of the error
+error = test_Y - pred_test_Y.flatten()
+mean_error = np.mean(error)
+std_error = np.std(error)
+print('Mean error:', mean_error)
+print('Standard deviation of error:', std_error)
+
+# Plot histogram of actual vs. predicted MMI values
+plt.figure(figsize=(10, 5))
+plt.hist(test_Y, bins=20, alpha=0.5, label='Actual MMI')
+plt.hist(pred_test_Y, bins=20, alpha=0.5, label='Predicted MMI')
+plt.xlabel('MMI')
+plt.ylabel('Frequency')
+plt.title('Histogram of Actual and Predicted MMI')
+plt.legend()
+plt.show()
+
+# Plot scatter of actual vs. predicted MMI values
+plt.figure(figsize=(10, 5))
+plt.scatter(test_Y, pred_test_Y, alpha=0.5)
+plt.xlabel('Actual MMI')
+plt.ylabel('Predicted MMI')
+plt.title('Scatter Plot of Actual vs. Predicted MMI')
+plt.plot([min(test_Y), max(test_Y)], [min(test_Y), max(test_Y)], 'r--')  # line of perfect prediction
+plt.show()
+
+# Plot error distribution
+plt.figure(figsize=(10, 5))
+n, bins, patches = plt.hist(error, bins=20, alpha=0.5, label='Error distribution', color='g')
+mu, sigma = norm.fit(error)
+best_fit_line = norm.pdf(bins, mu, sigma)
+plt.plot(bins, best_fit_line, 'r--', label='Normal distribution fit')
+plt.xlabel('Error')
+plt.ylabel('Frequency')
+plt.title('Error Distribution of Predictions')
+plt.legend()
+plt.show()
+
+# If you have a threshold for categorizing MMI levels, you could add a confusion matrix-like analysis here
+# For example, if MMI >= 3 is considered high, you could compute true positives, false negatives, etc.
