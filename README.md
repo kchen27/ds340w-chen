@@ -8,3 +8,6 @@ model’s generalization and performance on unseen data. By analyzing the first 
 waveform data, our improved CNN model predicts earthquake magnitudes with increased accuracy
 and reliability. The study demonstrates the potential of data augmentation in overcoming data
 scarcity and improving earthquake monitoring and early warning systems.
+
+
+Please view CNN_train.py for our project method
